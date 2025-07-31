@@ -29,7 +29,7 @@ const UserSchema = new mongoose.Schema({
     biographie: {
         type: String
     },
-    motDePasse: {
+    password: {
         type: String,
         required: true
     },

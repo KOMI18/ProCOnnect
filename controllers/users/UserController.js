@@ -21,7 +21,7 @@ exports.registerUser = async (req, res) => {
             dateDeNaissance,
             adresse,
             biographie,
-            motDePasse: hashedPassword,
+            password: hashedPassword,
             role
         });
 
@@ -34,7 +34,7 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.loginUser = async (req, res) => {
-    const { email, motDePasse } = req.body;
+    const { email, password } = req.body;
 
     try {
         const user = await User.findOne({ email });
@@ -42,7 +42,7 @@ exports.loginUser = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const isPasswordValid = await bcrypt.compare(motDePasse, user.motDePasse);
+        const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
@@ -51,9 +51,11 @@ exports.loginUser = async (req, res) => {
 
         res.status(200).json({ token , role: user.role });
     } catch (error) {
-        res.status(500).json({ message: 'Error logging in', error });
+        console.error(error);
+        res.status(500).json({ message: 'Error logging in', error: error.message });
     }
 };
+
 exports.getCurrentUser = async (req, res) => {
     const userId = req.user.userId;
     try {
